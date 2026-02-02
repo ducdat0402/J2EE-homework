@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Tiết Sách</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      padding: 50px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 700px;
+      width: 100%;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .book-icon {
+      text-align: center;
+      font-size: 5em;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2em;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .detail-card {
+      background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      border: 2px solid #e8ecff;
+    }
+
+    .detail-row {
+      display: flex;
+      padding: 20px 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      flex: 0 0 150px;
+      font-weight: 700;
+      color: #667eea;
+      font-size: 1em;
+      display: flex;
+      align-items: center;
+    }
+
+    .detail-value {
+      flex: 1;
+      color: #333;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 30px;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      font-size: 1em;
+      border: none;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+    }
+
+    .btn-warning:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 20px;
+      }
+
+      .detail-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .detail-label {
+        flex: auto;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="book-icon">📖</div>
+  <h1>Chi Tiết Sách</h1>
+
+  <div class="detail-card">
+    <div class="detail-row">
+      <div class="detail-label">🆔 ID:</div>
+      <div class="detail-value" th:text="${book.id}">1</div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">📚 Tên Sách:</div>
+      <div class="detail-value" th:text="${book.title}">Book Title</div>
+    </div>
+
+    <div class="detail-row">
+      <div class="detail-label">✍️ Tác Giả:</div>
+      <div class="detail-value" th:text="${book.author}">Author Name</div>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-warning">✏️ Chỉnh Sửa</a>
+    <a href="/books" class="btn btn-primary">📋 Danh Sách Sách</a>
+    <a href="/" class="btn btn-secondary">🏠 Trang Chủ</a>
+  </div>
+</div>
+</body>
+</html>
