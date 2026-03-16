@@ -11,6 +11,12 @@
         <a class="navbar-brand" th:href="@{/products}">Home</a>
         <a class="navbar-brand" th:href="@{/products/add}">Products</a>
     </div>
+    <!-- Nút Logout -->
+    <form th:action="@{/logout}" method="post" style="margin-right:20px;">
+        <button type="submit" class="btn btn-outline-danger btn-sm">
+            🚪 Logout
+        </button>
+    </form>
 </nav>
 
 <div class="container mt-4">
