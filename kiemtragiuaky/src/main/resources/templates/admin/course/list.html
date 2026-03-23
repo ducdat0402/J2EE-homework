@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quản lý học phần — EduPortal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;--blue-800:#1e40af;--blue-900:#1e3a8a;--navy:#0f172a;--navy2:#1e293b;--navy3:#334155;--muted:#94a3b8;--border:#1e3a5f;--text:#e2e8f0;--text2:#cbd5e1;--white:#fff;--danger:#ef4444;--warning:#f59e0b;--success:#10b981}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+        .navbar{background:rgba(15,23,42,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(12px);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:1rem}
+        .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+        .nav-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--blue-500),var(--blue-800));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 14px rgba(59,130,246,0.4)}
+        .nav-title{font-weight:800;font-size:1rem;color:var(--white)}
+        .nav-links{display:flex;align-items:center;gap:4px}
+        .nav-links a{text-decoration:none;color:var(--muted);font-size:0.83rem;font-weight:500;padding:6px 13px;border-radius:7px;transition:all 0.15s}
+        .nav-links a:hover,.nav-links a.active{color:var(--blue-400);background:rgba(59,130,246,0.1)}
+        .nav-right{display:flex;align-items:center;gap:8px}
+        .btn{display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;border-radius:8px;padding:7px 16px;cursor:pointer;text-decoration:none;transition:all 0.15s;border:none;font-family:inherit;white-space:nowrap}
+        .btn-blue{background:var(--blue-600);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,0.3)}
+        .btn-blue:hover{background:var(--blue-700);color:#fff;transform:translateY(-1px)}
+        .btn-ghost{background:var(--navy2);color:var(--muted);border:1px solid var(--border)}
+        .btn-ghost:hover{color:var(--text);border-color:var(--blue-500)}
+        .btn-warning{background:rgba(245,158,11,0.1);color:#fbbf24;border:1px solid rgba(245,158,11,0.2)}
+        .btn-warning:hover{background:var(--warning);color:var(--navy)}
+        .btn-danger{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+        .btn-danger:hover{background:var(--danger);color:#fff}
+        .btn-sm{padding:5px 12px;font-size:0.78rem}
+        .btn-logout{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+        .btn-logout:hover{background:var(--danger);color:#fff}
+        .main{max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem;width:100%;flex:1}
+        .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;gap:1rem;flex-wrap:wrap}
+        .page-title{font-size:1.7rem;font-weight:800;color:var(--white);letter-spacing:-0.03em}
+        .page-subtitle{font-size:0.83rem;color:var(--muted);margin-top:4px}
+        .card{background:var(--navy2);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.3)}
+        table{width:100%;border-collapse:collapse}
+        thead tr{border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(37,99,235,0.08),transparent)}
+        thead th{padding:14px 16px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--blue-400);text-align:left}
+        tbody tr{border-bottom:1px solid rgba(30,58,95,0.4);transition:background 0.12s}
+        tbody tr:last-child{border-bottom:none}
+        tbody tr:hover{background:rgba(37,99,235,0.05)}
+        td{padding:13px 16px;vertical-align:middle;font-size:0.875rem;color:var(--text2)}
+        .course-name{font-weight:600;color:var(--white);font-size:0.88rem}
+        .badge{background:rgba(59,130,246,0.15);color:var(--blue-400);border:1px solid rgba(59,130,246,0.2);border-radius:20px;padding:3px 10px;font-size:0.72rem;font-weight:600}
+        .id-badge{background:var(--navy3);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:2px 8px;font-size:0.73rem;font-weight:700}
+        .prod-img{width:80px;height:58px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:block}
+        .actions{display:flex;gap:6px;align-items:center}
+        .empty-state{text-align:center;padding:4rem 1rem;color:var(--muted)}
+        .empty-icon{font-size:3rem;margin-bottom:1rem;opacity:0.25;display:block}
+        footer{background:var(--navy2);border-top:1px solid var(--border);text-align:center;padding:1.2rem;font-size:0.78rem;color:var(--muted)}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+        .anim{animation:fadeUp 0.35s ease both}
+        .anim-1{animation-delay:0.07s}
+        @media(max-width:768px){
+            .navbar{padding:0 1rem !important;flex-wrap:wrap;height:auto;padding:0.75rem 1rem !important;gap:0.5rem}
+            .nav-links{display:none}
+            .main{padding:1.5rem 1rem}
+            .page-header{flex-direction:column}
+            table{font-size:0.8rem}
+            td,th{padding:10px 8px !important}
+            .actions{flex-direction:column;gap:4px}
+        }
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--navy)}::-webkit-scrollbar-thumb{background:var(--navy3);border-radius:6px}
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a class="nav-brand" th:href="@{/home}">
+        <div class="nav-logo">🎓</div>
+        <span class="nav-title">EduPortal</span>
+    </a>
+    <div class="nav-links">
+        <a th:href="@{/home}">🏠 Trang chủ</a>
+        <a th:href="@{/admin/courses}" class="active">📚 Học phần</a>
+    </div>
+    <div class="nav-right">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-logout btn-sm">🚪 Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="main">
+
+    <div class="page-header anim">
+        <div>
+            <div class="page-title">📚 Quản lý học phần</div>
+            <div class="page-subtitle">Thêm, sửa và xoá các học phần trong hệ thống</div>
+        </div>
+        <a th:href="@{/admin/courses/add}" class="btn btn-blue">＋ Thêm học phần</a>
+    </div>
+
+    <div class="card anim anim-1">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Tên học phần</th>
+                <th>Tín chỉ</th>
+                <th>Giảng viên</th>
+                <th>Hình ảnh</th>
+                <th>Danh mục</th>
+                <th style="text-align:right;padding-right:20px;">Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(courses)}">
+                <td colspan="7">
+                    <div class="empty-state">
+                        <span class="empty-icon">📦</span>
+                        <p>Chưa có học phần nào. <a th:href="@{/admin/courses/add}" style="color:var(--blue-400)">Thêm ngay →</a></p>
+                    </div>
+                </td>
+            </tr>
+            <tr th:each="course : ${courses}">
+                <td><span class="id-badge" th:text="${course.id}"></span></td>
+                <td><span class="course-name" th:text="${course.name}"></span></td>
+                <td><span class="badge" th:text="${course.credits} + ' TC'"></span></td>
+                <td th:text="${course.lecturer}"></td>
+                <td>
+                    <img class="prod-img"
+                         th:if="${course.image != null and !#strings.isEmpty(course.image)}"
+                         th:src="@{/images/} + ${course.image}" alt="img">
+                    <span th:unless="${course.image != null and !#strings.isEmpty(course.image)}"
+                          style="color:var(--muted);font-size:0.8rem;">—</span>
+                </td>
+                <td th:text="${course.category != null ? course.category.name : '—'}"></td>
+                <td>
+                    <div class="actions" style="justify-content:flex-end;">
+                        <a th:href="@{/admin/courses/edit/{id}(id=${course.id})}"
+                           class="btn btn-warning btn-sm">✏ Sửa</a>
+                        <form th:action="@{/admin/courses/delete/{id}(id=${course.id})}"
+                              method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Xoá học phần này?')">🗑 Xoá</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<footer>© 2025 · EduPortal Admin Panel</footer>
+</body>
+</html>

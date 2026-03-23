@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Course Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue-300:#93c5fd;--blue-400:#60a5fa;--blue-500:#3b82f6;
+            --blue-600:#2563eb;--blue-700:#1d4ed8;--blue-800:#1e40af;--blue-900:#1e3a8a;
+            --navy:#0f172a;--navy2:#1e293b;--navy3:#334155;
+            --muted:#94a3b8;--border:#1e3a5f;--text:#e2e8f0;--text2:#cbd5e1;--white:#fff;
+            --success:#10b981;--danger:#ef4444;
+        }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+        /* NAVBAR */
+        .navbar{background:rgba(15,23,42,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(12px);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:1rem}
+        .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+        .nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--blue-500),var(--blue-800));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 16px rgba(59,130,246,0.4);flex-shrink:0}
+        .nav-title{font-weight:800;font-size:1.05rem;color:var(--white);letter-spacing:-0.02em}
+        .nav-center{display:flex;align-items:center;gap:4px}
+        .nav-center a{text-decoration:none;color:var(--muted);font-size:0.85rem;font-weight:500;padding:6px 14px;border-radius:8px;transition:all 0.15s}
+        .nav-center a:hover{color:var(--blue-400);background:rgba(59,130,246,0.1)}
+        .nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+        .search-form{display:flex;align-items:center;gap:6px}
+        .search-input{background:var(--navy2);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:0.82rem;color:var(--text);width:200px;outline:none;font-family:inherit;transition:all 0.15s}
+        .search-input::placeholder{color:var(--muted)}
+        .search-input:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(59,130,246,0.15)}
+        .btn{display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;border-radius:8px;padding:7px 16px;cursor:pointer;text-decoration:none;transition:all 0.15s;border:none;font-family:inherit;white-space:nowrap}
+        .btn-blue{background:var(--blue-600);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,0.3)}
+        .btn-blue:hover{background:var(--blue-700);color:#fff;transform:translateY(-1px)}
+        .btn-outline{background:transparent;color:var(--blue-400);border:1.5px solid var(--blue-500)}
+        .btn-outline:hover{background:rgba(59,130,246,0.1);color:var(--blue-300)}
+        .btn-ghost{background:var(--navy2);color:var(--muted);border:1px solid var(--border)}
+        .btn-ghost:hover{color:var(--text);border-color:var(--blue-500)}
+        .btn-danger{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+        .btn-danger:hover{background:var(--danger);color:#fff}
+        .btn-success{background:rgba(16,185,129,0.1);color:#34d399;border:1px solid rgba(16,185,129,0.2)}
+        .btn-success:hover{background:var(--success);color:#fff}
+        .btn-sm{padding:5px 12px;font-size:0.78rem}
+        /* MAIN */
+        .main{max-width:1200px;margin:0 auto;padding:2.5rem 1.5rem;width:100%;flex:1}
+        /* HERO */
+        .hero{background:linear-gradient(135deg,rgba(37,99,235,0.15) 0%,rgba(30,58,138,0.08) 100%);border:1px solid rgba(59,130,246,0.2);border-radius:16px;padding:2.5rem;margin-bottom:2.5rem;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(59,130,246,0.2),transparent 70%);pointer-events:none}
+        .hero h1{font-size:1.8rem;font-weight:800;color:var(--white);letter-spacing:-0.03em;margin-bottom:0.5rem}
+        .hero p{font-size:0.9rem;color:var(--muted);max-width:500px}
+        .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:var(--blue-400);border-radius:20px;padding:4px 14px;font-size:0.78rem;font-weight:600;margin-bottom:1rem}
+        /* ALERTS */
+        .alert{border-radius:10px;padding:12px 16px;font-size:0.85rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:8px}
+        .alert-success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:#34d399}
+        .alert-warning{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#fbbf24}
+        .alert-info{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);color:var(--blue-400)}
+        /* SECTION HEADER */
+        .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+        .section-title{font-size:1.15rem;font-weight:700;color:var(--white)}
+        .section-count{font-size:0.8rem;color:var(--muted)}
+        /* GRID */
+        .courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.2rem}
+        /* COURSE CARD */
+        .course-card{background:var(--navy2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.2s;display:flex;flex-direction:column}
+        .course-card:hover{transform:translateY(-4px);border-color:var(--blue-500);box-shadow:0 8px 32px rgba(37,99,235,0.2)}
+        .course-card-img{width:100%;height:150px;object-fit:cover}
+        .course-card-placeholder{width:100%;height:150px;background:linear-gradient(135deg,var(--navy3),var(--blue-900));display:flex;align-items:center;justify-content:center;font-size:2.5rem;opacity:0.35}
+        .course-card-body{padding:1rem;flex:1;display:flex;flex-direction:column;gap:5px}
+        .course-card-title{font-weight:700;font-size:0.88rem;color:var(--white);line-height:1.3}
+        .course-card-meta{font-size:0.76rem;color:var(--muted);display:flex;align-items:center;gap:4px}
+        .badge{background:rgba(59,130,246,0.15);color:var(--blue-400);border:1px solid rgba(59,130,246,0.2);border-radius:20px;padding:3px 10px;font-size:0.72rem;font-weight:600}
+        .badge-green{background:rgba(16,185,129,0.12);color:#34d399;border-color:rgba(16,185,129,0.2)}
+        .course-card-footer{padding:0.75rem 1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+        /* PAGINATION */
+        .pagination{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:2rem}
+        .page-btn{background:var(--navy2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:7px 14px;font-size:0.82rem;font-weight:500;cursor:pointer;text-decoration:none;transition:all 0.15s;font-family:inherit}
+        .page-btn:hover{border-color:var(--blue-500);color:var(--blue-400);background:rgba(59,130,246,0.08)}
+        .page-btn.active{background:var(--blue-600);border-color:var(--blue-600);color:#fff}
+        .page-btn.disabled{opacity:0.4;pointer-events:none}
+        /* EMPTY */
+        .empty-state{text-align:center;padding:4rem 1rem;color:var(--muted)}
+        .empty-icon{font-size:3rem;margin-bottom:1rem;opacity:0.25;display:block}
+        /* FOOTER */
+        footer{background:var(--navy2);border-top:1px solid var(--border);text-align:center;padding:1.2rem;font-size:0.78rem;color:var(--muted)}
+        /* ANIMATIONS */
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .anim{animation:fadeUp 0.35s ease both}
+        .anim-1{animation-delay:0.07s}
+        .anim-2{animation-delay:0.14s}
+        /* RESPONSIVE */
+        @media(max-width:768px){
+            .navbar{padding:0 1rem;flex-wrap:wrap;height:auto;padding:0.75rem 1rem !important;gap:0.5rem}
+            .nav-center{display:none}
+            .search-input{width:140px}
+            .main{padding:1.5rem 1rem}
+            .hero{padding:1.5rem}
+            .hero h1{font-size:1.4rem}
+            .courses-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+        }
+        @media(max-width:480px){
+            .courses-grid{grid-template-columns:1fr 1fr}
+            .search-input{width:110px}
+        }
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--navy)}::-webkit-scrollbar-thumb{background:var(--navy3);border-radius:6px}
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a class="nav-brand" th:href="@{/home}">
+        <div class="nav-logo">🎓</div>
+        <span class="nav-title">EduPortal</span>
+    </a>
+
+    <div class="nav-center">
+        <a th:href="@{/home}">Trang chủ</a>
+        <a th:href="@{/admin/courses}" sec:authorize="hasRole('ADMIN')">⚙ Quản lý</a>
+        <a th:href="@{/enroll/my-courses}" sec:authorize="hasRole('STUDENT')">📋 Học phần của tôi</a>
+    </div>
+
+    <!-- Search -->
+    <form class="search-form" th:action="@{/home}" method="get">
+        <input class="search-input" type="text" name="keyword"
+               th:value="${keyword}" placeholder="🔍 Tìm học phần...">
+        <button type="submit" class="btn btn-blue btn-sm">Tìm</button>
+        <a th:href="@{/home}" class="btn btn-ghost btn-sm"
+           th:if="${keyword != null and !keyword.isEmpty()}">✕</a>
+    </form>
+
+    <div class="nav-right">
+        <a th:href="@{/register}" class="btn btn-success btn-sm"
+           sec:authorize="isAnonymous()">📝 Đăng ký</a>
+        <a th:href="@{/login}" class="btn btn-outline btn-sm"
+           sec:authorize="isAnonymous()">🔐 Đăng nhập</a>
+        <span sec:authorize="isAuthenticated()"
+              style="font-size:0.8rem;color:var(--muted);">
+            👤 <span sec:authentication="name"></span>
+        </span>
+        <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+            <button type="submit" class="btn btn-danger btn-sm">🚪 Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="main">
+
+    <!-- HERO -->
+    <div class="hero anim" th:if="${keyword == null or keyword.isEmpty()}">
+        <div class="hero-badge">🎓 Course Registration System</div>
+        <h1>Khám phá học phần</h1>
+        <p>Tìm kiếm và đăng ký các học phần phù hợp với chương trình học của bạn.</p>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="alert alert-success" th:if="${successMessage}">
+        ✅ <span th:text="${successMessage}"></span>
+    </div>
+    <div class="alert alert-warning" th:if="${errorMessage}">
+        ⚠ <span th:text="${errorMessage}"></span>
+    </div>
+    <div class="alert alert-info" th:if="${keyword != null and !keyword.isEmpty()}">
+        🔍 Kết quả cho: <strong th:text="${keyword}"></strong>
+        — <strong th:text="${#lists.size(courses)}"></strong> học phần
+        <a th:href="@{/home}" style="margin-left:8px;color:var(--blue-300);">✕ Xoá tìm kiếm</a>
+    </div>
+
+    <!-- SECTION -->
+    <div class="section-header anim anim-1">
+        <span class="section-title">📚 Tất cả học phần</span>
+        <span class="section-count" th:text="${#lists.size(courses)} + ' học phần'"></span>
+    </div>
+
+    <!-- EMPTY -->
+    <div class="empty-state" th:if="${#lists.isEmpty(courses)}">
+        <span class="empty-icon">📦</span>
+        <p>Không tìm thấy học phần nào.</p>
+    </div>
+
+    <!-- COURSES GRID -->
+    <div class="courses-grid anim anim-2" th:unless="${#lists.isEmpty(courses)}">
+        <div class="course-card" th:each="course : ${courses}">
+            <img class="course-card-img"
+                 th:if="${course.image != null and !#strings.isEmpty(course.image)}"
+                 th:src="@{/images/} + ${course.image}" alt="course">
+            <div class="course-card-placeholder"
+                 th:unless="${course.image != null and !#strings.isEmpty(course.image)}">📚</div>
+
+            <div class="course-card-body">
+                <div class="course-card-title" th:text="${course.name}"></div>
+                <div class="course-card-meta">
+                    👨‍🏫 <span th:text="${course.lecturer}"></span>
+                </div>
+                <div class="course-card-meta" th:if="${course.category != null}">
+                    🏷 <span th:text="${course.category.name}"></span>
+                </div>
+                <div style="margin-top:4px;">
+                    <span class="badge" th:text="${course.credits} + ' tín chỉ'"></span>
+                </div>
+            </div>
+
+            <div class="course-card-footer" sec:authorize="hasRole('STUDENT')">
+                <form th:action="@{/enroll/{id}(id=${course.id})}" method="post" style="width:100%;">
+                    <button type="submit" class="btn btn-success"
+                            style="width:100%; justify-content:center;">
+                        ✚ Enroll
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a class="page-btn"
+           th:classappend="${currentPage == 0} ? ' disabled'"
+           th:href="@{/home(page=${currentPage - 1}, keyword=${keyword})}">«</a>
+
+        <a class="page-btn"
+           th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+           th:classappend="${i == currentPage} ? ' active'"
+           th:href="@{/home(page=${i}, keyword=${keyword})}"
+           th:text="${i + 1}"></a>
+
+        <a class="page-btn"
+           th:classappend="${currentPage == totalPages - 1} ? ' disabled'"
+           th:href="@{/home(page=${currentPage + 1}, keyword=${keyword})}">»</a>
+    </div>
+
+</div>
+
+<footer>© 2025 · EduPortal — Course Registration System</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

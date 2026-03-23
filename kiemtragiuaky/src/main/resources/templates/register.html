@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Đăng ký — EduPortal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;--blue-800:#1e40af;--navy:#0f172a;--navy2:#1e293b;--muted:#94a3b8;--border:#1e3a5f;--text:#e2e8f0;--white:#fff;--danger:#ef4444}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;padding:2rem 1rem;position:relative;overflow:hidden}
+        body::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(37,99,235,0.12),transparent 70%);pointer-events:none}
+        .wrapper{width:100%;max-width:480px;z-index:1}
+        .brand{text-align:center;margin-bottom:1.8rem}
+        .logo{width:50px;height:50px;background:linear-gradient(135deg,var(--blue-500),var(--blue-800));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 0.8rem;box-shadow:0 0 20px rgba(59,130,246,0.4)}
+        .brand h1{font-size:1.5rem;font-weight:800;color:var(--white);letter-spacing:-0.03em}
+        .brand p{font-size:0.83rem;color:var(--muted);margin-top:3px}
+        .card{background:var(--navy2);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+        .card-header{padding:1.1rem 1.8rem 0.8rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(37,99,235,0.1),transparent)}
+        .card-header span{font-size:0.78rem;font-weight:700;color:var(--blue-400);text-transform:uppercase;letter-spacing:0.08em}
+        .card-body{padding:1.8rem;display:flex;flex-direction:column;gap:1.1rem}
+        .alert{border-radius:9px;padding:10px 14px;font-size:0.82rem;font-weight:500;display:flex;align-items:center;gap:8px}
+        .alert-error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#fca5a5}
+        .field label{display:block;font-size:0.82rem;font-weight:600;color:#cbd5e1;margin-bottom:7px}
+        .field input{width:100%;background:var(--navy);border:1.5px solid var(--border);border-radius:9px;padding:10px 14px;font-size:0.88rem;font-family:inherit;color:var(--text);outline:none;transition:all 0.15s}
+        .field input::placeholder{color:var(--muted)}
+        .field input:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(59,130,246,0.15)}
+        .field-error{margin-top:6px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#fca5a5;border-radius:8px;padding:6px 11px;font-size:0.78rem;display:flex;align-items:center;gap:6px}
+        .field-error::before{content:"⚠ "}
+        .btn-register{width:100%;background:var(--blue-600);color:#fff;border:none;border-radius:9px;padding:12px;font-size:0.9rem;font-weight:700;font-family:inherit;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 14px rgba(37,99,235,0.35)}
+        .btn-register:hover{background:var(--blue-700);transform:translateY(-1px)}
+        .footer-link{text-align:center;margin-top:1.5rem;font-size:0.83rem;color:var(--muted)}
+        .footer-link a{color:var(--blue-400);text-decoration:none;font-weight:600}
+        .footer-link a:hover{color:#93c5fd}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .brand{animation:slideUp 0.35s ease both}
+        .card{animation:slideUp 0.35s ease 0.08s both}
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <div class="brand">
+        <div class="logo">🎓</div>
+        <h1>Tạo tài khoản mới</h1>
+        <p>Đăng ký để bắt đầu đăng ký học phần</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><span>📝 Thông tin tài khoản</span></div>
+        <div class="card-body">
+
+            <div class="alert alert-error" th:if="${errorMessage}">
+                ❌ <span th:text="${errorMessage}"></span>
+            </div>
+
+            <form th:action="@{/register}" th:object="${registerDTO}" method="post">
+
+                <div class="field">
+                    <label>Username <span style="color:var(--danger)">*</span></label>
+                    <input type="text" th:field="*{username}" placeholder="Nhập username">
+                    <div class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                </div>
+
+                <div class="field">
+                    <label>Mật khẩu <span style="color:var(--danger)">*</span></label>
+                    <input type="password" th:field="*{password}" placeholder="Tối thiểu 6 ký tự">
+                    <div class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+
+                <div class="field">
+                    <label>Email <span style="color:var(--danger)">*</span></label>
+                    <input type="email" th:field="*{email}" placeholder="example@email.com">
+                    <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+
+                <button type="submit" class="btn-register">Tạo tài khoản →</button>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="footer-link">
+        Đã có tài khoản? <a th:href="@{/login}">Đăng nhập</a>
+        &nbsp;·&nbsp;
+        <a th:href="@{/home}">Về trang chủ</a>
+    </div>
+
+</div>
+</body>
+</html>

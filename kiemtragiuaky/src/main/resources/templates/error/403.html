@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>403 — Không có quyền</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-800:#1e40af;--navy:#0f172a;--navy2:#1e293b;--muted:#94a3b8;--border:#1e3a5f;--text:#e2e8f0;--white:#fff;--danger:#ef4444}
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;overflow:hidden;position:relative}
+        body::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(239,68,68,0.06),transparent 70%);pointer-events:none}
+        .card{background:var(--navy2);border:1px solid rgba(239,68,68,0.2);border-radius:20px;padding:3.5rem 3rem;text-align:center;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 40px rgba(239,68,68,0.08);z-index:1}
+        .error-code{font-size:5rem;font-weight:800;background:linear-gradient(135deg,#f87171,#fca5a5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:0.5rem;letter-spacing:-0.05em}
+        .error-icon{font-size:3rem;margin-bottom:1rem;display:block}
+        .error-title{font-size:1.3rem;font-weight:700;color:var(--white);margin-bottom:0.5rem}
+        .error-desc{font-size:0.87rem;color:var(--muted);line-height:1.6;margin-bottom:2rem}
+        .error-desc strong{color:#f87171}
+        .btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue-600);color:#fff;border:none;border-radius:10px;padding:11px 24px;font-size:0.88rem;font-weight:700;font-family:inherit;cursor:pointer;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 14px rgba(37,99,235,0.3)}
+        .btn:hover{background:var(--blue-800);color:#fff;transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,0.4)}
+        @keyframes bounceIn{0%{opacity:0;transform:scale(0.8)}60%{transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+        .card{animation:bounceIn 0.5s ease both}
+    </style>
+</head>
+<body>
+<div class="card">
+    <span class="error-icon">🚫</span>
+    <div class="error-code">403</div>
+    <div class="error-title">Không có quyền truy cập</div>
+    <p class="error-desc">
+        Trang này chỉ dành cho <strong>ADMIN</strong>.<br>
+        Tài khoản của bạn không có quyền thực hiện thao tác này.
+    </p>
+    <a th:href="@{/home}" class="btn">← Quay về trang chủ</a>
+</div>
+</body>
+</html>

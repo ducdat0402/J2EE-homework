@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Đăng nhập — EduPortal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;--blue-800:#1e40af;--blue-900:#1e3a8a;--navy:#0f172a;--navy2:#1e293b;--navy3:#334155;--muted:#94a3b8;--border:#1e3a5f;--text:#e2e8f0;--white:#fff;--danger:#ef4444;--success:#10b981}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;position:relative;overflow:hidden}
+        /* BG decorations */
+        body::before{content:'';position:absolute;top:-100px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(37,99,235,0.15),transparent 70%);pointer-events:none}
+        body::after{content:'';position:absolute;bottom:-100px;right:-100px;width:350px;height:350px;background:radial-gradient(circle,rgba(30,58,138,0.2),transparent 70%);pointer-events:none}
+        .login-wrapper{width:100%;max-width:440px;padding:1rem;z-index:1}
+        /* Brand */
+        .login-brand{text-align:center;margin-bottom:2rem}
+        .login-logo{width:56px;height:56px;background:linear-gradient(135deg,var(--blue-500),var(--blue-800));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 1rem;box-shadow:0 0 24px rgba(59,130,246,0.4)}
+        .login-title{font-size:1.6rem;font-weight:800;color:var(--white);letter-spacing:-0.03em;margin-bottom:4px}
+        .login-sub{font-size:0.85rem;color:var(--muted)}
+        /* Card */
+        .login-card{background:var(--navy2);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+        .login-card-header{padding:1.2rem 1.8rem 0.8rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(37,99,235,0.1),transparent)}
+        .login-card-header span{font-size:0.78rem;font-weight:700;color:var(--blue-400);text-transform:uppercase;letter-spacing:0.08em}
+        .login-card-body{padding:1.8rem}
+        /* Alert */
+        .alert{border-radius:9px;padding:10px 14px;font-size:0.82rem;font-weight:500;margin-bottom:1.2rem;display:flex;align-items:center;gap:8px}
+        .alert-error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#fca5a5}
+        .alert-success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:#6ee7b7}
+        /* Fields */
+        .field{margin-bottom:1.1rem}
+        .field label{display:block;font-size:0.82rem;font-weight:600;color:#cbd5e1;margin-bottom:7px}
+        .field input{width:100%;background:var(--navy);border:1.5px solid var(--border);border-radius:9px;padding:11px 14px;font-size:0.88rem;font-family:inherit;color:var(--text);outline:none;transition:all 0.15s}
+        .field input::placeholder{color:var(--muted)}
+        .field input:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(59,130,246,0.15)}
+        /* Button */
+        .btn-login{width:100%;background:var(--blue-600);color:#fff;border:none;border-radius:9px;padding:12px;font-size:0.9rem;font-weight:700;font-family:inherit;cursor:pointer;transition:all 0.2s;margin-top:0.3rem;box-shadow:0 4px 14px rgba(37,99,235,0.35)}
+        .btn-login:hover{background:var(--blue-700);transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,0.45)}
+        /* Divider */
+        .divider{display:flex;align-items:center;gap:12px;margin:1.2rem 0;color:var(--muted);font-size:0.78rem}
+        .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+        /* Google btn */
+        .btn-google{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--white);color:#1f2937;border:none;border-radius:9px;padding:11px;font-size:0.88rem;font-weight:600;font-family:inherit;cursor:pointer;text-decoration:none;transition:all 0.15s;width:100%}
+        .btn-google:hover{background:#f3f4f6;transform:translateY(-1px)}
+        /* Footer */
+        .login-footer{text-align:center;margin-top:1.5rem;font-size:0.83rem;color:var(--muted)}
+        .login-footer a{color:var(--blue-400);text-decoration:none;font-weight:600}
+        .login-footer a:hover{color:#93c5fd}
+        /* Animation */
+        @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+        .login-brand{animation:slideUp 0.4s ease both}
+        .login-card{animation:slideUp 0.4s ease 0.1s both}
+        @media(max-width:480px){.login-wrapper{padding:1rem 0.75rem}}
+    </style>
+</head>
+<body>
+<div class="login-wrapper">
+
+    <div class="login-brand">
+        <div class="login-logo">🎓</div>
+        <div class="login-title">EduPortal</div>
+        <div class="login-sub">Hệ thống đăng ký học phần</div>
+    </div>
+
+    <div class="login-card">
+        <div class="login-card-header">
+            <span>🔐 Đăng nhập tài khoản</span>
+        </div>
+        <div class="login-card-body">
+
+            <div class="alert alert-error" th:if="${param.error}">
+                ❌ Sai tên đăng nhập hoặc mật khẩu!
+            </div>
+            <div class="alert alert-success" th:if="${param.registered}">
+                ✅ Đăng ký thành công! Vui lòng đăng nhập.
+            </div>
+            <div class="alert alert-success" th:if="${param.logout}">
+                👋 Bạn đã đăng xuất thành công!
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="field">
+                    <label>Tên đăng nhập</label>
+                    <input type="text" name="username" placeholder="Nhập username" autofocus>
+                </div>
+                <div class="field">
+                    <label>Mật khẩu</label>
+                    <input type="password" name="password" placeholder="Nhập password">
+                </div>
+                <button type="submit" class="btn-login">Đăng nhập →</button>
+            </form>
+
+            <div class="divider">hoặc</div>
+
+            <a href="/oauth2/authorization/google" class="btn-google">
+                <svg width="20" height="20" viewBox="0 0 48 48">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                </svg>
+                Đăng nhập bằng Google
+            </a>
+
+        </div>
+    </div>
+
+    <div class="login-footer">
+        Chưa có tài khoản?
+        <a th:href="@{/register}">Đăng ký ngay</a>
+        &nbsp;·&nbsp;
+        <a th:href="@{/home}">Về trang chủ</a>
+    </div>
+
+</div>
+</body>
+</html>
