@@ -18,6 +18,40 @@
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
         /* NAVBAR */
+        .active-sort {
+    background: var(--blue-600);
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+}
+
+.inactive-sort {
+    background: var(--navy2);
+    color: var(--muted) !important;
+    border: 1px solid var(--border);
+}
+
+.inactive-sort:hover {
+    border-color: var(--blue-500);
+    color: var(--blue-400) !important;
+}
+.active-sort {
+    background: var(--blue-600) !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+}
+
+.inactive-sort {
+    background: var(--navy2) !important;
+    color: var(--muted) !important;
+    border: 1px solid var(--border) !important;
+}
+
+.inactive-sort:hover {
+    border-color: var(--blue-500) !important;
+    color: var(--blue-400) !important;
+}
+
+select option { background: var(--navy2); color: var(--text); }
         .navbar{background:rgba(15,23,42,0.97);border-bottom:1px solid var(--border);backdrop-filter:blur(12px);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:1rem}
         .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
         .nav-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--blue-500),var(--blue-800));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 16px rgba(59,130,246,0.4);flex-shrink:0}
@@ -130,6 +164,10 @@
     </form>
 
     <div class="nav-right">
+        <a th:href="@{/cart}" sec:authorize="hasRole('STUDENT')"
+           style="position:relative;">
+            🛒 Giỏ hàng
+        </a>
         <a th:href="@{/register}" class="btn btn-success btn-sm"
            sec:authorize="isAnonymous()">📝 Đăng ký</a>
         <a th:href="@{/login}" class="btn btn-outline btn-sm"
@@ -166,6 +204,85 @@
         <a th:href="@{/home}" style="margin-left:8px;color:var(--blue-300);">✕ Xoá tìm kiếm</a>
     </div>
 
+
+    <!-- FILTER BAR -->
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:1.5rem; flex-wrap:wrap;">
+
+        <!-- SORT -->
+        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+        <span style="font-size:0.78rem; color:var(--muted); font-weight:600;">
+            Sắp xếp:
+        </span>
+
+            <a th:href="@{/home(keyword=${keyword}, sort='', categoryId=${categoryId}, page=0)}"
+               th:classappend="${sort == '' or sort == null} ? 'active-sort' : 'inactive-sort'"
+               style="padding:6px 13px; border-radius:8px; font-size:0.8rem;
+                  font-weight:600; text-decoration:none; transition:all 0.15s;">
+                🔀 Mặc định
+            </a>
+
+            <a th:href="@{/home(keyword=${keyword}, sort='credits_asc', categoryId=${categoryId}, page=0)}"
+               th:classappend="${sort == 'credits_asc'} ? 'active-sort' : 'inactive-sort'"
+               style="padding:6px 13px; border-radius:8px; font-size:0.8rem;
+                  font-weight:600; text-decoration:none; transition:all 0.15s;">
+                ↑ Tín chỉ tăng
+            </a>
+
+            <a th:href="@{/home(keyword=${keyword}, sort='credits_desc', categoryId=${categoryId}, page=0)}"
+               th:classappend="${sort == 'credits_desc'} ? 'active-sort' : 'inactive-sort'"
+               style="padding:6px 13px; border-radius:8px; font-size:0.8rem;
+                  font-weight:600; text-decoration:none; transition:all 0.15s;">
+                ↓ Tín chỉ giảm
+            </a>
+        </div>
+
+        <!-- DIVIDER -->
+        <div style="width:1px; height:24px; background:var(--border);"></div>
+
+        <!-- CATEGORY FILTER -->
+        <div style="display:flex; align-items:center; gap:6px;">
+        <span style="font-size:0.78rem; color:var(--muted); font-weight:600;">
+            Danh mục:
+        </span>
+
+            <form th:action="@{/home}" method="get"
+                  style="display:flex; align-items:center; gap:6px;">
+                <!-- Giữ lại keyword và sort -->
+                <input type="hidden" name="keyword" th:value="${keyword}">
+                <input type="hidden" name="sort"    th:value="${sort}">
+                <input type="hidden" name="page"    value="0">
+
+                <select name="categoryId"
+                        onchange="this.form.submit()"
+                        style="background:var(--navy2); border:1px solid var(--border);
+                           border-radius:8px; padding:6px 12px; font-size:0.8rem;
+                           color:var(--text); font-family:inherit; cursor:pointer;
+                           outline:none; transition:border-color 0.15s;">
+                    <option value="0"
+                            th:selected="${categoryId == 0}">
+                        🏷 Tất cả danh mục
+                    </option>
+                    <option th:each="cat : ${categories}"
+                            th:value="${cat.id}"
+                            th:text="${cat.name}"
+                            th:selected="${cat.id == categoryId}">
+                    </option>
+                </select>
+            </form>
+
+            <!-- Nút xoá filter nếu đang lọc -->
+            <a th:if="${categoryId != 0}"
+               th:href="@{/home(keyword=${keyword}, sort=${sort}, categoryId=0, page=0)}"
+               style="display:inline-flex; align-items:center; padding:6px 10px;
+                  border-radius:8px; font-size:0.78rem; font-weight:600;
+                  text-decoration:none; background:rgba(239,68,68,0.1);
+                  color:#f87171; border:1px solid rgba(239,68,68,0.2);
+                  transition:all 0.15s;">
+                ✕
+            </a>
+        </div>
+
+    </div>
     <!-- SECTION -->
     <div class="section-header anim anim-1">
         <span class="section-title">📚 Tất cả học phần</span>
@@ -208,24 +325,32 @@
                     </button>
                 </form>
             </div>
+            <div class="course-card-footer" sec:authorize="hasRole('STUDENT')">
+                <form th:action="@{/cart/add/{id}(id=${course.id})}"
+                      method="post" style="width:100%;">
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn btn-blue"
+                            style="width:100%; justify-content:center;">
+                        🛒 Thêm vào giỏ
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
     <!-- PAGINATION -->
     <div class="pagination" th:if="${totalPages > 1}">
         <a class="page-btn"
-           th:classappend="${currentPage == 0} ? ' disabled'"
-           th:href="@{/home(page=${currentPage - 1}, keyword=${keyword})}">«</a>
+           th:href="@{/home(page=${currentPage-1}, keyword=${keyword}, sort=${sort}, categoryId=${categoryId})}">«</a>
 
         <a class="page-btn"
-           th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+           th:each="i : ${#numbers.sequence(0, totalPages-1)}"
            th:classappend="${i == currentPage} ? ' active'"
-           th:href="@{/home(page=${i}, keyword=${keyword})}"
-           th:text="${i + 1}"></a>
+           th:href="@{/home(page=${i}, keyword=${keyword}, sort=${sort}, categoryId=${categoryId})}"
+           th:text="${i+1}"></a>
 
         <a class="page-btn"
-           th:classappend="${currentPage == totalPages - 1} ? ' disabled'"
-           th:href="@{/home(page=${currentPage + 1}, keyword=${keyword})}">»</a>
+           th:href="@{/home(page=${currentPage+1}, keyword=${keyword}, sort=${sort}, categoryId=${categoryId})}">»</a>
     </div>
 
 </div>

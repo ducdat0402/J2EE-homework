@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/static/**", "/images/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/enroll/**").hasRole("STUDENT")
+                        .requestMatchers("/enroll/**", "/cart/**").hasRole("STUDENT")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

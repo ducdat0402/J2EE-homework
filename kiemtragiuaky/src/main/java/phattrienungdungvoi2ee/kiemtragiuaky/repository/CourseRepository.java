@@ -10,7 +10,13 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
 
     Page<Course> findAll(Pageable pageable);
 
-    // Tìm kiếm theo tên (không phân biệt hoa thường)
+    // Tìm kiếm theo tên
     @Query("SELECT c FROM Course c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Course> searchByName(String keyword, Pageable pageable);
+
+    // Tìm kiếm + lọc category
+    @Query("SELECT c FROM Course c WHERE " +
+            "LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (:categoryId = 0 OR c.category.id = :categoryId)")
+    Page<Course> searchAndFilter(String keyword, int categoryId, Pageable pageable);
 }

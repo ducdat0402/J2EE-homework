@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đơn hàng — EduPortal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;--blue-800:#1e40af;--navy:#0f172a;--navy2:#1e293b;--navy3:#334155;--muted:#94a3b8;--border:#1e3a5f;--text:#e2e8f0;--text2:#cbd5e1;--white:#fff;--danger:#ef4444;--success:#10b981}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+    .navbar{background:rgba(15,23,42,0.97);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:1rem}
+    .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--blue-500),var(--blue-800));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+    .nav-title{font-weight:800;font-size:1rem;color:var(--white)}
+    .nav-links{display:flex;align-items:center;gap:4px}
+    .nav-links a{text-decoration:none;color:var(--muted);font-size:0.83rem;font-weight:500;padding:6px 13px;border-radius:7px;transition:all 0.15s}
+    .nav-links a:hover,.nav-links a.active{color:var(--blue-400);background:rgba(59,130,246,0.1)}
+    .btn{display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;border-radius:8px;padding:7px 16px;cursor:pointer;text-decoration:none;transition:all 0.15s;border:none;font-family:inherit}
+    .btn-logout{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+    .btn-logout:hover{background:var(--danger);color:#fff}
+    .btn-sm{padding:5px 12px;font-size:0.78rem}
+    .main{max-width:1000px;margin:0 auto;padding:2.5rem 1.5rem;width:100%;flex:1}
+    .page-header{margin-bottom:2rem}
+    .page-title{font-size:1.7rem;font-weight:800;color:var(--white);letter-spacing:-0.03em}
+    .page-sub{font-size:0.83rem;color:var(--muted);margin-top:4px}
+    /* ORDER CARD */
+    .order-card{background:var(--navy2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:1.2rem;box-shadow:0 4px 24px rgba(0,0,0,0.2)}
+    .order-header{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(37,99,235,0.08),transparent);flex-wrap:wrap;gap:0.5rem}
+    .order-id{font-weight:700;color:var(--blue-400);font-size:0.9rem}
+    .order-date{font-size:0.78rem;color:var(--muted)}
+    .badge-confirmed{background:rgba(16,185,129,0.12);color:#34d399;border:1px solid rgba(16,185,129,0.2);border-radius:20px;padding:3px 12px;font-size:0.74rem;font-weight:600}
+    .order-total{font-weight:800;color:var(--blue-400);font-size:1rem}
+    /* DETAIL TABLE */
+    table{width:100%;border-collapse:collapse}
+    thead tr{border-bottom:1px solid var(--border)}
+    thead th{padding:10px 16px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);text-align:left}
+    tbody tr{border-bottom:1px solid rgba(30,58,95,0.3)}
+    tbody tr:last-child{border-bottom:none}
+    td{padding:11px 16px;font-size:0.85rem;color:var(--text2)}
+    td.name{font-weight:600;color:var(--white)}
+    td.subtotal{font-weight:700;color:var(--blue-400)}
+    /* EMPTY */
+    .empty-state{text-align:center;padding:4rem 1rem;color:var(--muted)}
+    .empty-icon{font-size:3rem;margin-bottom:1rem;display:block;opacity:0.25}
+    .empty-state a{color:var(--blue-400);text-decoration:none;font-weight:600}
+    footer{background:var(--navy2);border-top:1px solid var(--border);text-align:center;padding:1.2rem;font-size:0.78rem;color:var(--muted)}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    .anim{animation:fadeUp 0.35s ease both}
+    .anim-1{animation-delay:0.07s}
+    @media(max-width:768px){.navbar{padding:0 1rem}.nav-links{display:none}.main{padding:1.5rem 1rem}td,th{padding:8px 10px !important}}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--navy)}::-webkit-scrollbar-thumb{background:var(--navy3);border-radius:6px}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-brand" th:href="@{/home}">
+    <div class="nav-logo">🎓</div>
+    <span class="nav-title">EduPortal</span>
+  </a>
+  <div class="nav-links">
+    <a th:href="@{/home}">🏠 Trang chủ</a>
+    <a th:href="@{/cart}">🛒 Giỏ hàng</a>
+    <a th:href="@{/cart/orders}" class="active">📦 Đơn hàng</a>
+  </div>
+  <form th:action="@{/logout}" method="post">
+    <button type="submit" class="btn btn-logout btn-sm">🚪 Logout</button>
+  </form>
+</nav>
+
+<div class="main">
+
+  <div class="page-header anim">
+    <div class="page-title">📦 Lịch sử đơn hàng</div>
+    <div class="page-sub">Tất cả các đơn hàng bạn đã đặt</div>
+  </div>
+
+  <!-- EMPTY -->
+  <div class="empty-state anim" th:if="${#lists.isEmpty(orders)}">
+    <span class="empty-icon">📦</span>
+    <p>Bạn chưa có đơn hàng nào.<br>
+      <a th:href="@{/cart}">Về giỏ hàng →</a>
+    </p>
+  </div>
+
+  <!-- ORDER LIST -->
+  <div th:each="order : ${orders}" class="order-card anim anim-1">
+    <div class="order-header">
+      <div>
+        <div class="order-id" th:text="'Đơn hàng #' + ${order.id}"></div>
+        <div class="order-date"
+             th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="badge-confirmed" th:text="${order.status}"></span>
+        <span class="order-total"
+              th:text="${order.totalAmount} + ' TC'"></span>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+      <tr>
+        <th>Tên học phần</th>
+        <th>Đơn giá</th>
+        <th>Số lượng</th>
+        <th>Thành tiền</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="detail : ${order.orderDetails}">
+        <td class="name" th:text="${detail.course.name}"></td>
+        <td th:text="${detail.price} + ' TC'"></td>
+        <td th:text="${detail.quantity}"></td>
+        <td class="subtotal" th:text="${detail.subtotal} + ' TC'"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>© 2025 · EduPortal — Course Registration System</footer>
+</body>
+</html>

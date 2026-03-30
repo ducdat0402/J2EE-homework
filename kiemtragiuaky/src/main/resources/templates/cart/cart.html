@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Giỏ hàng — EduPortal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--blue-400:#60a5fa;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;--blue-800:#1e40af;--navy:#0f172a;--navy2:#1e293b;--navy3:#334155;--muted:#94a3b8;--border:#1e3a5f;--text:#e2e8f0;--text2:#cbd5e1;--white:#fff;--danger:#ef4444;--success:#10b981;--warning:#f59e0b}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+        .navbar{background:rgba(15,23,42,0.97);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:1rem}
+        .nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+        .nav-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--blue-500),var(--blue-800));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+        .nav-title{font-weight:800;font-size:1rem;color:var(--white)}
+        .nav-links{display:flex;align-items:center;gap:4px}
+        .nav-links a{text-decoration:none;color:var(--muted);font-size:0.83rem;font-weight:500;padding:6px 13px;border-radius:7px;transition:all 0.15s}
+        .nav-links a:hover,.nav-links a.active{color:var(--blue-400);background:rgba(59,130,246,0.1)}
+        .btn{display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;border-radius:8px;padding:7px 16px;cursor:pointer;text-decoration:none;transition:all 0.15s;border:none;font-family:inherit;white-space:nowrap}
+        .btn-blue{background:var(--blue-600);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,0.3)}
+        .btn-blue:hover{background:var(--blue-700);color:#fff;transform:translateY(-1px)}
+        .btn-ghost{background:var(--navy2);color:var(--muted);border:1px solid var(--border)}
+        .btn-ghost:hover{color:var(--text);border-color:var(--blue-500)}
+        .btn-danger{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+        .btn-danger:hover{background:var(--danger);color:#fff}
+        .btn-success{background:rgba(16,185,129,0.1);color:#34d399;border:1px solid rgba(16,185,129,0.2)}
+        .btn-success:hover{background:var(--success);color:#fff}
+        .btn-logout{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2)}
+        .btn-logout:hover{background:var(--danger);color:#fff}
+        .btn-sm{padding:5px 12px;font-size:0.78rem}
+        .main{max-width:1000px;margin:0 auto;padding:2.5rem 1.5rem;width:100%;flex:1}
+        .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+        .page-title{font-size:1.7rem;font-weight:800;color:var(--white);letter-spacing:-0.03em}
+        .page-sub{font-size:0.83rem;color:var(--muted);margin-top:4px}
+        .layout{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start}
+        .card{background:var(--navy2);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.3)}
+        /* CART ITEMS */
+        .cart-item{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;border-bottom:1px solid rgba(30,58,95,0.4);transition:background 0.12s}
+        .cart-item:last-child{border-bottom:none}
+        .cart-item:hover{background:rgba(37,99,235,0.04)}
+        .item-icon{width:52px;height:52px;background:linear-gradient(135deg,var(--navy3),var(--blue-900));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+        .item-info{flex:1;min-width:0}
+        .item-name{font-weight:700;color:var(--white);font-size:0.9rem;margin-bottom:3px}
+        .item-price{font-size:0.78rem;color:var(--muted)}
+        .item-qty{display:flex;align-items:center;gap:6px}
+        .qty-input{width:60px;background:var(--navy);border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-size:0.85rem;color:var(--text);text-align:center;font-family:inherit;outline:none}
+        .qty-input:focus{border-color:var(--blue-500)}
+        .item-subtotal{font-weight:700;color:var(--blue-400);font-size:0.95rem;min-width:80px;text-align:right}
+        /* SUMMARY CARD */
+        .summary-card{background:var(--navy2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;box-shadow:0 4px 24px rgba(0,0,0,0.3)}
+        .summary-title{font-size:1rem;font-weight:700;color:var(--white);margin-bottom:1.2rem;padding-bottom:0.8rem;border-bottom:1px solid var(--border)}
+        .summary-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;font-size:0.85rem}
+        .summary-row .label{color:var(--muted)}
+        .summary-row .value{color:var(--text2);font-weight:600}
+        .summary-total{display:flex;justify-content:space-between;align-items:center;padding-top:0.8rem;border-top:1px solid var(--border);margin-top:0.4rem}
+        .summary-total .label{font-size:0.9rem;font-weight:700;color:var(--white)}
+        .summary-total .value{font-size:1.15rem;font-weight:800;color:var(--blue-400)}
+        .checkout-btn{width:100%;background:var(--blue-600);color:#fff;border:none;border-radius:10px;padding:13px;font-size:0.92rem;font-weight:700;font-family:inherit;cursor:pointer;transition:all 0.2s;margin-top:1rem;box-shadow:0 4px 14px rgba(37,99,235,0.35);display:flex;align-items:center;justify-content:center;gap:8px}
+        .checkout-btn:hover{background:var(--blue-700);transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,0.45)}
+        /* ALERT */
+        .alert{border-radius:10px;padding:12px 16px;font-size:0.85rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:8px}
+        .alert-success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:#34d399}
+        .alert-warning{background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#fbbf24}
+        /* EMPTY */
+        .empty-state{text-align:center;padding:4rem 1rem;color:var(--muted)}
+        .empty-icon{font-size:3.5rem;margin-bottom:1rem;display:block;opacity:0.25}
+        .empty-state p{font-size:0.9rem;line-height:1.8}
+        .empty-state a{color:var(--blue-400);text-decoration:none;font-weight:600}
+        footer{background:var(--navy2);border-top:1px solid var(--border);text-align:center;padding:1.2rem;font-size:0.78rem;color:var(--muted)}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+        .anim{animation:fadeUp 0.35s ease both}
+        .anim-1{animation-delay:0.07s}
+        @media(max-width:768px){
+            .navbar{padding:0 1rem}
+            .nav-links{display:none}
+            .main{padding:1.5rem 1rem}
+            .layout{grid-template-columns:1fr}
+            .cart-item{flex-wrap:wrap}
+        }
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--navy)}::-webkit-scrollbar-thumb{background:var(--navy3);border-radius:6px}
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a class="nav-brand" th:href="@{/home}">
+        <div class="nav-logo">🎓</div>
+        <span class="nav-title">EduPortal</span>
+    </a>
+    <div class="nav-links">
+        <a th:href="@{/home}">🏠 Trang chủ</a>
+        <a th:href="@{/enroll/my-courses}">📋 Học phần của tôi</a>
+        <a th:href="@{/cart}" class="active">🛒 Giỏ hàng</a>
+        <a th:href="@{/cart/orders}">📦 Đơn hàng</a>
+    </div>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="btn btn-logout btn-sm">🚪 Logout</button>
+    </form>
+</nav>
+
+<div class="main">
+
+    <div class="page-header anim">
+        <div>
+            <div class="page-title">🛒 Giỏ hàng</div>
+            <div class="page-sub"
+                 th:text="${#lists.isEmpty(cartItems)}
+                     ? 'Giỏ hàng trống'
+                     : totalQty + ' học phần trong giỏ'"></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+            <a th:href="@{/home}" class="btn btn-ghost">← Tiếp tục mua</a>
+            <form th:action="@{/cart/clear}" method="post"
+                  th:if="${!#lists.isEmpty(cartItems)}">
+                <button type="submit" class="btn btn-danger"
+                        onclick="return confirm('Xoá toàn bộ giỏ hàng?')">
+                    🗑 Xoá tất cả
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="alert alert-success" th:if="${successMessage}">
+        ✅ <span th:text="${successMessage}"></span>
+    </div>
+    <div class="alert alert-warning" th:if="${errorMessage}">
+        ⚠ <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state anim" th:if="${#lists.isEmpty(cartItems)}">
+        <span class="empty-icon">🛒</span>
+        <p>Giỏ hàng của bạn đang trống.<br>
+            <a th:href="@{/home}">Khám phá học phần →</a>
+        </p>
+    </div>
+
+    <!-- CART LAYOUT -->
+    <div class="layout anim anim-1" th:unless="${#lists.isEmpty(cartItems)}">
+
+        <!-- CART ITEMS -->
+        <div class="card">
+            <div th:each="item : ${cartItems}" class="cart-item">
+                <div class="item-icon">📚</div>
+
+                <div class="item-info">
+                    <div class="item-name" th:text="${item.courseName}"></div>
+                    <div class="item-price"
+                         th:text="'Đơn giá: ' + ${item.price} + ' tín chỉ'"></div>
+                </div>
+
+                <!-- Update quantity -->
+                <form th:action="@{/cart/update/{id}(id=${item.courseId})}"
+                      method="post" class="item-qty">
+                    <input class="qty-input" type="number" name="quantity"
+                           th:value="${item.quantity}" min="1" max="99"
+                           onchange="this.form.submit()">
+                </form>
+
+                <div class="item-subtotal"
+                     th:text="${item.subtotal} + ' TC'"></div>
+
+                <!-- Remove -->
+                <form th:action="@{/cart/remove/{id}(id=${item.courseId})}"
+                      method="post">
+                    <button type="submit" class="btn btn-danger btn-sm">✕</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-card">
+            <div class="summary-title">📋 Tóm tắt đơn hàng</div>
+
+            <div class="summary-row">
+                <span class="label">Số học phần</span>
+                <span class="value" th:text="${#lists.size(cartItems)}"></span>
+            </div>
+            <div class="summary-row">
+                <span class="label">Tổng số lượng</span>
+                <span class="value" th:text="${totalQty}"></span>
+            </div>
+
+            <div class="summary-total">
+                <span class="label">Tổng cộng</span>
+                <span class="value" th:text="${totalAmount} + ' TC'"></span>
+            </div>
+
+            <form th:action="@{/cart/checkout}" method="post">
+                <button type="submit" class="checkout-btn">
+                    ✓ Đặt hàng ngay
+                </button>
+            </form>
+
+            <a th:href="@{/cart/orders}"
+               style="display:block;text-align:center;margin-top:0.8rem;
+                      font-size:0.8rem;color:var(--muted);text-decoration:none;">
+                📦 Xem lịch sử đơn hàng
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<footer>© 2025 · EduPortal — Course Registration System</footer>
+</body>
+</html>
